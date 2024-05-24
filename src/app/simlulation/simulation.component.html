@@ -1,0 +1,43 @@
+<div class="container text-center">
+  <h1 class="mt-4 mb-4">Simulación de Autobús</h1>
+  <div class="row mb-3">
+    <div class="col">
+      <button class="btn btn-success me-2" (click)="startSimulation()" [disabled]="simulationRunning">Iniciar Simulación</button>
+      <button class="btn btn-danger" (click)="stopSimulation()" [disabled]="!simulationRunning">Detener Simulación</button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-4 col-md-6" *ngFor="let stop of busStops">
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">{{ stop.nombre }}</h5>
+          <p class="card-text">Personas en Espera: {{ stop.personasEnEspera }}</p>
+          <p class="card-text">Personas Abordadas: {{ stop.personasAbordo }}</p>
+          <p class="card-text">Personas Desembarcadas: {{ stop.personaDesembarcada }}</p>
+          <div class="btn-group" role="group" aria-label="Acciones">
+            <button class="btn btn-primary me-2" (click)="simulateArrival(stop.id)" [disabled]="!simulationRunning">Simular Llegada</button>
+            <button class="btn btn-primary me-2" (click)="simulateBoarding(stop.id)" [disabled]="!simulationRunning">Simular Abordaje</button>
+            <button class="btn btn-primary" (click)="simulateDisembarking(stop.id)" [disabled]="!simulationRunning">Simular Desembarque</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="!simulationRunning && stats.totalTransportado > 0">
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title">Estadísticas de la Simulación</h2>
+          <p class="card-text">Total Transportado: {{ stats.totalTransportado }}</p>
+          <p class="card-text">Restantes en el Autobús: {{ stats.faltanteEnBus }}</p>
+          <p class="card-text">Dejados Atrás: {{ stats.abandonados }}</p>
+          <div *ngFor="let stopId of busStopIds">
+            <p class="card-text">Parada {{ stopId }}: {{ stats.transportadosPorParada[stopId] || 0 }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
