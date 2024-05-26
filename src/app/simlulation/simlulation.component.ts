@@ -14,7 +14,7 @@ import { Chart } from 'chart.js';
 })
 export class SimulationComponent implements OnInit {
   @ViewChild('chart') chartRef!: ElementRef<HTMLCanvasElement>;
-  @ViewChild('busContainer') busContainerRef!: ElementRef<HTMLDivElement>;
+  @ViewChild('busImage') busImageRef!: ElementRef<HTMLImageElement>;
   private chart!: Chart;
   private busInterval!: any;
 
@@ -63,6 +63,7 @@ export class SimulationComponent implements OnInit {
       });
     }
   }
+
   ngOnInit() {
     this.busStops = this.simulationService.getBusStops();
     this.bus = this.simulationService.getBus();
@@ -94,10 +95,17 @@ export class SimulationComponent implements OnInit {
   }
 
   moveBusToNextStop() {
-    const busContainer = this.busContainerRef.nativeElement;
+    const busImage = this.busImageRef.nativeElement;
     const stopContainer = document.getElementById(`stop-${this.busStops[this.currentStopIndex].id}`);
-    if (stopContainer) {
-      busContainer.style.left = `${stopContainer.offsetLeft}px`;
+    if (busImage && stopContainer) {
+      const stopRect = stopContainer.getBoundingClientRect();
+      const busContainerRect = busImage.parentElement?.getBoundingClientRect();
+      if (busContainerRect) {
+        const left = stopRect.left - busContainerRect.left;
+        const top = stopRect.top - busContainerRect.top;
+        busImage.style.left = `${left}px`;
+        busImage.style.top = `${top}px`;
+      }
     }
     this.currentStopIndex = (this.currentStopIndex + 1) % this.busStops.length;
   }
