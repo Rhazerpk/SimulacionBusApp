@@ -8,18 +8,22 @@ import { Chart } from 'chart.js';
 @Component({
   selector: 'app-simulation',
   templateUrl: './simulation.component.html',
+  styleUrls: ['./simulation.component.css'],
   standalone: true,
   imports: [CommonModule]
 })
 export class SimulationComponent implements OnInit {
   @ViewChild('chart') chartRef!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('busContainer') busContainerRef!: ElementRef<HTMLDivElement>;
   private chart!: Chart;
+  private busInterval!: any;
 
   busStops: BusStop[] = [];
   bus: Bus = new Bus(1, 50);
   stats: SimulationStats = new SimulationStats();
   simulationRunning: boolean = false;
   busStopIds: number[] = [];
+  currentStopIndex: number = 0;
 
   constructor(
     private simulationService: SimulationService,
@@ -42,6 +46,7 @@ export class SimulationComponent implements OnInit {
             ]
           },
           options: {
+            responsive: true,
             scales: {
               y: {
                 beginAtZero: true
@@ -58,7 +63,6 @@ export class SimulationComponent implements OnInit {
       });
     }
   }
-
   ngOnInit() {
     this.busStops = this.simulationService.getBusStops();
     this.bus = this.simulationService.getBus();
@@ -68,13 +72,34 @@ export class SimulationComponent implements OnInit {
 
   startSimulation() {
     this.simulationRunning = true;
+    this.simulateBusMovement();
   }
 
   stopSimulation() {
     this.simulationRunning = false;
     this.simulationService.stopSimulation();
+    clearInterval(this.busInterval);
     this.chart.data.datasets[0].data = this.busStopIds.map(id => this.stats.transportadosPorParada[id] || 0);
     this.chart.update();
+  }
+
+  simulateBusMovement() {
+    this.busInterval = setInterval(() => {
+      const currentStop = this.busStops[this.currentStopIndex];
+      this.simulateArrival(currentStop.id);
+      this.simulateBoarding(currentStop.id);
+      this.simulateDisembarking(currentStop.id);
+      this.moveBusToNextStop();
+    }, 2000);
+  }
+
+  moveBusToNextStop() {
+    const busContainer = this.busContainerRef.nativeElement;
+    const stopContainer = document.getElementById(`stop-${this.busStops[this.currentStopIndex].id}`);
+    if (stopContainer) {
+      busContainer.style.left = `${stopContainer.offsetLeft}px`;
+    }
+    this.currentStopIndex = (this.currentStopIndex + 1) % this.busStops.length;
   }
 
   simulateArrival(stopId: number) {

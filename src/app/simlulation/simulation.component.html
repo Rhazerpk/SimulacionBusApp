@@ -7,21 +7,30 @@
     </div>
   </div>
 
-  <div class="row">
-    <div class="col-lg-4 col-md-6" *ngFor="let stop of busStops">
+  <hr>
+
+  <div class="bus-container">
+    <div #busContainer class="bus">
+      <span class="bus-name">Bus 1</span>
+    </div>
+  </div>
+
+  <div class="stops-container">
+    <div *ngFor="let stop of busStops" [id]="'stop-' + stop.id" class="stop">
       <div class="card mb-4">
         <div class="card-body">
           <h5 class="card-title">{{ stop.nombre }}</h5>
           <p class="card-text">Personas en Espera: {{ stop.personasEnEspera }}</p>
           <p class="card-text">Personas Abordadas: {{ stop.personasAbordo }}</p>
           <p class="card-text">Personas Desembarcadas: {{ stop.personaDesembarcada }}</p>
-          <div class="btn-group" role="group" aria-label="Acciones">
-            <button class="btn btn-primary me-2" (click)="simulateArrival(stop.id)" [disabled]="!simulationRunning">Simular Llegada</button>
-            <button class="btn btn-primary me-2" (click)="simulateBoarding(stop.id)" [disabled]="!simulationRunning">Simular Abordaje</button>
-            <button class="btn btn-primary" (click)="simulateDisembarking(stop.id)" [disabled]="!simulationRunning">Simular Desembarque</button>
-          </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <canvas #chart></canvas>
     </div>
   </div>
 
@@ -40,12 +49,4 @@
       </div>
     </div>
   </div>
-
-  <div class="row">
-    <div class="col">
-      <canvas #chart></canvas>
-    </div>
-  </div>
-
-
 </div>
