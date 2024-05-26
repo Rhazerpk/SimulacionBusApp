@@ -2,12 +2,10 @@
   <h1 class="mt-4 mb-4">Simulación de Autobús</h1>
   <div class="row mb-3">
     <div class="col">
-      <button class="btn btn-success me-2" (click)="startSimulation()" [disabled]="simulationRunning">Iniciar Simulación</button>
+      <button class="btn btn-primary me-2" (click)="startSimulation()" [disabled]="simulationRunning">Iniciar Simulación</button>
       <button class="btn btn-danger" (click)="stopSimulation()" [disabled]="!simulationRunning">Detener Simulación</button>
     </div>
   </div>
-
-  <hr>
 
   <div class="bus-container">
     <div #busContainer class="bus">
